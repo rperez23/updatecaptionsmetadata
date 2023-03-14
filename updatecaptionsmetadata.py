@@ -40,7 +40,15 @@ cappth = get_input('Give me your captn s3 path: ')
 xlf    = get_input('Give me your xl file name : ')
 hns    = get_HouseNumbers()
 
+#open the Metadata sheet for read/write
+try:
+	wb = openpyxl.load_workbook(xlf)
+except:
+	print('\n','   ~~~Cannot open Metadata Sheet~~~\n')
+	sys.exit(1)
 
+wb.save(xlf)
+wb.close()
 
 
 
