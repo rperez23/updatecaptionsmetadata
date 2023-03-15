@@ -7,6 +7,7 @@ import openpyxl
 import warnings
 
 warnings.filterwarnings('ignore', category=DeprecationWarning)
+warnings.simplefilter(action='ignore', category=UserWarning)
 
 
 sheet = '1. Master Metadata'
@@ -43,15 +44,13 @@ def get_input(question):
 def getColNumNum(xlf,sheet,colname):
 
 
-	stop = True
-
 	for c in range(START_COL,100):
 
 		txt = str(ws.cell(row=START_ROW,column=c).value)
 		if txt == colname:
 			return c
 
-	print('\n   ~~~Could not find Column:', colname, '~~~')
+	print('\n   ~~~Could not find Column:', colname, 'in Metadata Sheet~~~\n')
 
 	wb.save(xlf)
 	wb.close()
@@ -59,6 +58,34 @@ def getColNumNum(xlf,sheet,colname):
 	sys.exit(1)
 
 	return c
+
+def getxldata(ws,hn,epc,hnc,capc):
+
+	r = START_ROW + 2
+
+	fname     = ''
+	capprefix = ''
+	counter = 0 
+
+	while counter < 10:
+
+		txt = str(ws.cell(row=r,column=hnc).value)
+
+		if txt == hn:
+
+			fname     = str(ws.cell(row=r,column=epc).value)
+			capprefix = str(ws.cell(row=r,column=capc).value)
+
+			return fname, capprefix
+
+		elif txt == 'None':
+
+			counter += 1
+
+		r += 1
+
+	return fname, capprefix
+
 
 
 #get info from the user 
@@ -81,16 +108,23 @@ except:
 	print('\n','   ~~~Cannot open Metadata Sheet~~~\n')
 	sys.exit(1)
 
-#Supplier.OriginalName
-#Fremantle.HouseNumber
-#TWK.AncillaryName
-#getColNumNum(xlf,sheet,colname):
-
-movcol = getColNumNum(xlf,ws,'Supplier.OriginalName')
+epcol  = getColNumNum(xlf,ws,'Supplier.OriginalName')
 hncol  = getColNumNum(xlf,ws,'Fremantle.HouseNumber')
 capcol = getColNumNum(xlf,ws,'TWK.AncillaryName')
 
-print(movcol,':',capcol,':',hncol)
+for i in range(0,len(hns)):
+
+	#get a house number from the hns list
+	hn = hns[i]
+
+	epname, prefix = getxldata(ws,hn,epcol,hncol,capcol)
+
+	if epname == '' or prefix == '':
+		print(hn,': SKIPPING')
+	else:
+		print(hn,':',epname,':',prefix)
+
+
 wb.save(xlf)
 wb.close()
 
