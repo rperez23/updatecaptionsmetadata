@@ -86,13 +86,35 @@ def getxldata(ws,hn,epc,hnc,capc):
 
 	return fname, capprefix
 
+def getversion(txt):
 
+	newfname = ''
+
+	m = re.search('v(\d+)_(\d{8}\.[a-zA-Z]+)$',txt)
+
+	if m:
+		n       = int(m.group(1)) + 1
+		
+		matched = m.group(0)
+		before   = txt[:m.start()]
+		newfname = before + 'v' + str(n) + '_' + m.group(2)
+		#print(txt, ':', newfname)
+
+	else:
+		n        = 2
+		p        = re.search('(_\d{8}\.[a-zA-Z]+)$',txt)
+		matched  = p.group(0)
+		before   = txt[:p.start()]
+		newfname = before + '_v' + str(n) + matched
+		#print(txt, ':', newfname)
+
+	return newfname
 
 #get info from the user 
-vidpth = get_input('Give me your video s3 path: ')
-cappth = get_input('Give me your captn s3 path: ')
-xlf    = get_input('Give me your xl file name : ')
-hns    = get_HouseNumbers()
+vidpth  = get_input('Give me your video s3 path: ')
+cappth  = get_input('Give me your captn s3 path: ')
+xlf     = get_input('Give me your xl file name : ')
+hns     = get_HouseNumbers()
 
 #open the Metadata xlf for read/write
 try:
@@ -108,6 +130,7 @@ except:
 	print('\n','   ~~~Cannot open Metadata Sheet~~~\n')
 	sys.exit(1)
 
+
 epcol  = getColNumNum(xlf,ws,'Supplier.OriginalName')
 hncol  = getColNumNum(xlf,ws,'Fremantle.HouseNumber')
 capcol = getColNumNum(xlf,ws,'TWK.AncillaryName')
@@ -122,7 +145,8 @@ for i in range(0,len(hns)):
 	if epname == '' or prefix == '':
 		print(hn,': SKIPPING')
 	else:
-		print(hn,':',epname,':',prefix)
+		#print(hn,':',epname,':',prefix)		
+		newepname  = getversion(epname)
 
 
 wb.save(xlf)
