@@ -123,6 +123,33 @@ def getcaptiontype(capf):
 	return ''
 
 
+
+def updatexlf(ws,hncol,hn,epcol,newepname,capcol,caption):
+
+	r = START_ROW + 2
+	c = 0
+
+	for r in range(r,1000):
+
+		txt = str(ws.cell(row=r,column=hncol).value)
+
+		if txt == hn:
+			c = 1
+			break
+
+	if c == 1:
+
+		#print('ROW =',r,': NAME-COL:',epcol,': SCC-COL:',capcol)
+
+
+		cell = ws.cell(row=r,column=epcol)
+		cell.value = newepname
+
+		cell = ws.cell(row=r,column=capcol)
+		cell.value = caption
+
+
+
 #get info from the user 
 vidpth  = get_input('Give me your video s3 path: ')
 cappth  = get_input('Give me your captn s3 path: ')
@@ -174,7 +201,8 @@ for i in range(0,len(hns)):
 		print(lncmd)
 		statln = os.system(lncmd)
 
-		
+		#update the xlf
+		updatexlf(ws,hncol,hn,epcol,newepname,capcol,parts[0])
 
 
 
