@@ -159,15 +159,22 @@ for i in range(0,len(hns)):
 		print(hn,': SKIPPING')
 	else:
 				
-		newepname  = getversion(epname)
-		capext     = getcaptiontype(hn)
-		capfname   = prefix + '.' + capext
+		newepname   = getversion(epname)
+		capext      = getcaptiontype(hn)
+		capfname    = prefix + '.' + capext
+		parts       = newepname.split('.')
+		newcapname  = parts[0] + '.' + capext
 
-		#print(hn,':',epname,':',newepname,':',capfname)
+		#print(hn,':',newepname,':',newcapname)
 		#BUZ_LMAD03247 : LetsMakeADeal_s2012_e4074_20230227.mxf : LetsMakeADeal_s2012_e4074_v2_20230227.mxf : LetsMakeADeal_s2012_e4074_20230227.scc
 		#BUZ_LMAD03248 : LetsMakeADeal_s2012_e4075_20230227.mxf : LetsMakeADeal_s2012_e4075_v2_20230227.mxf : LetsMakeADeal_s2012_e4075_20230227.scc
 
+		#link the caption file
+		lncmd = 'ln ' + hn + '.' + capext + ' ' + newcapname
+		print(lncmd)
+		statln = os.system(lncmd)
 
+		
 
 
 
