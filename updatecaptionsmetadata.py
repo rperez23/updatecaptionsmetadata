@@ -110,6 +110,19 @@ def getversion(txt):
 
 	return newfname
 
+def getcaptiontype(capf):
+
+	scc = capf + '.scc'
+	srt = capf + '.srt'
+
+	if os.path.isfile(scc):
+		return 'scc'
+	elif os.path.isfile(srt):
+		return 'srt'
+	
+	return ''
+
+
 #get info from the user 
 vidpth  = get_input('Give me your video s3 path: ')
 cappth  = get_input('Give me your captn s3 path: ')
@@ -145,8 +158,17 @@ for i in range(0,len(hns)):
 	if epname == '' or prefix == '':
 		print(hn,': SKIPPING')
 	else:
-		#print(hn,':',epname,':',prefix)		
+				
 		newepname  = getversion(epname)
+		capext     = getcaptiontype(hn)
+		capfname   = prefix + '.' + capext
+
+		#print(hn,':',epname,':',newepname,':',capfname)
+		#BUZ_LMAD03247 : LetsMakeADeal_s2012_e4074_20230227.mxf : LetsMakeADeal_s2012_e4074_v2_20230227.mxf : LetsMakeADeal_s2012_e4074_20230227.scc
+		#BUZ_LMAD03248 : LetsMakeADeal_s2012_e4075_20230227.mxf : LetsMakeADeal_s2012_e4075_v2_20230227.mxf : LetsMakeADeal_s2012_e4075_20230227.scc
+
+
+
 
 
 wb.save(xlf)
