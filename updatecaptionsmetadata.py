@@ -10,8 +10,9 @@ warnings.filterwarnings('ignore', category=DeprecationWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 
 
-sheet = '1. Master Metadata'
-hns   = []
+recyclebin = 's3://s3-fremantle-uk-or-1/fremantleuk/DMS UK/FAST_CHANNEL_EDITS/Burbank/z_ToDelete/'
+sheet      = '1. Master Metadata'
+hns        = []
 
 START_ROW = 4
 START_COL = 2
@@ -201,12 +202,19 @@ for i in range(0,len(hns)):
 		print(lncmd)
 		statln = os.system(lncmd)
 
+		#move the captions to the recycle bin
+		capmvcmd = 'aws s3 mv "' + vidpth + capfname + '" "' + recyclebin + '"'
+		print(capmvcmd)
+		statcapmv = os.system(capmvcmd)
+
+		#move the captions to recybelbin
+
 		#update the xlf
 		updatexlf(ws,hncol,hn,epcol,newepname,capcol,parts[0])
 
-
-
 wb.save(xlf)
 wb.close()
+
+
 
 
