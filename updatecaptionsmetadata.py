@@ -42,6 +42,7 @@ def get_input(question):
 	data = input(question)
 	return data
 
+#get the column number given the column name i.e. 'Supplier.Source' Fremantle.HouseNumber'
 def getColNumNum(xlf,sheet,colname):
 
 
@@ -87,6 +88,7 @@ def getxldata(ws,hn,epc,hnc,capc):
 
 	return fname, capprefix
 
+#given the file name, return the file name with the version incrimented by 1
 def getversion(txt):
 
 	newfname = ''
@@ -111,6 +113,7 @@ def getversion(txt):
 
 	return newfname
 
+#dtermin if caption is scc or srt
 def getcaptiontype(capf):
 
 	scc = capf + '.scc'
@@ -172,26 +175,31 @@ except:
 	sys.exit(1)
 
 
+#get the column numbers for (filename, housenumber, scc prefix)
 epcol  = getColNumNum(xlf,ws,'Supplier.OriginalName')
 hncol  = getColNumNum(xlf,ws,'Fremantle.HouseNumber')
 capcol = getColNumNum(xlf,ws,'TWK.AncillaryName')
 
+#iterate over the house numbers index
 for i in range(0,len(hns)):
 
 	#get a house number from the hns list
 	hn = hns[i]
 
+
+	#given the house number, return the 'episode name' and 'caption prefix'
 	epname, prefix = getxldata(ws,hn,epcol,hncol,capcol)
 
+	#if the episode name or the caption prefix is blank, skip it
 	if epname == '' or prefix == '':
 		print(hn,': SKIPPING')
 	else:
 				
-		newepname   = getversion(epname)
-		capext      = getcaptiontype(hn)
-		capfname    = prefix + '.' + capext
-		parts       = newepname.split('.')
-		newcapname  = parts[0] + '.' + capext
+		newepname   = getversion(epname)       #get the new name of mxf file with the version incrimented by 1
+		capext      = getcaptiontype(hn)       #get the extension tyoe fo the caption file
+		capfname    = prefix + '.' + capext    #get the name of the caption with the extension
+		parts       = newepname.split('.')     #split the new mxf name by .
+		newcapname  = parts[0] + '.' + capext  #create the new caption file name
 
 		#print(hn,':',newepname,':',newcapname)
 		#BUZ_LMAD03247 : LetsMakeADeal_s2012_e4074_20230227.mxf : LetsMakeADeal_s2012_e4074_v2_20230227.mxf : LetsMakeADeal_s2012_e4074_20230227.scc
@@ -205,12 +213,13 @@ for i in range(0,len(hns)):
 		#move the captions to the recycle bin
 		capmvcmd = 'aws s3 mv "' + vidpth + capfname + '" "' + recyclebin + '"'
 		print(capmvcmd)
-		statcapmv = os.system(capmvcmd)
+		#statcapmv = os.system(capmvcmd)
 
-		#move the captions to recybelbin
-
-		#update the xlf
+		#update the xlf with the new names
 		updatexlf(ws,hncol,hn,epcol,newepname,capcol,parts[0])
+
+		#NEXT STEPS:
+		#RENAME MXF ON S3
 
 wb.save(xlf)
 wb.close()
