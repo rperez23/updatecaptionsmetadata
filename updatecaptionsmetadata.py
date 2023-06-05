@@ -213,13 +213,17 @@ for i in range(0,len(hns)):
 		#move the captions to the recycle bin
 		capmvcmd = 'aws s3 mv "' + vidpth + capfname + '" "' + recyclebin + '"'
 		print(capmvcmd)
-		#statcapmv = os.system(capmvcmd)
+		statcapmv = os.system(capmvcmd)
 
 		#update the xlf with the new names
 		updatexlf(ws,hncol,hn,epcol,newepname,capcol,parts[0])
 
 		#NEXT STEPS:
 		#RENAME MXF ON S3
+		vidmvcmd = 'aws s3 mv "' + vidpth + epname + '" "' + vidpth + newepname + '"'
+		print(vidmvcmd)
+
+		print('')
 
 wb.save(xlf)
 wb.close()
