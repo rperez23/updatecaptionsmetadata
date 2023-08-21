@@ -180,6 +180,8 @@ epcol  = getColNumNum(xlf,ws,'Supplier.OriginalName')
 hncol  = getColNumNum(xlf,ws,'Fremantle.HouseNumber')
 capcol = getColNumNum(xlf,ws,'TWK.AncillaryName')
 
+error = False
+
 #iterate over the house numbers index
 for i in range(0,len(hns)):
 
@@ -218,22 +220,33 @@ for i in range(0,len(hns)):
 		#update the xlf with the new names
 		updatexlf(ws,hncol,hn,epcol,newepname,capcol,parts[0])
 
-		#WORKING ON:
-		#RENAME MXF ON S3
+		
+		#rename video file on s3
 		vidmvcmd = 'aws s3 mv "' + vidpth + epname + '" "' + vidpth + newepname + '"'
 		print(vidmvcmd)
 		statvidmv = os.system(vidmvcmd)
 
-		print(statcapmv, type(statcapmv))
-		print(statvidmv, type(statvidmv))
-
-
+		#print(statcapmv, type(statcapmv))
+		#print(statvidmv, type(statvidmv))
 
 		print('')
+		print('   link    status:',str(statln))
+		print('   recycle status:',str(statcapmv))
+		print('   episode status:',str(statvidmv))
+		print('')
+
+		if (statln != 0) or (statcapmv != 0) or (statvidmv !=0):
+			error = True
 
 wb.save(xlf)
 wb.close()
 
+print('')
+if error:	
+	print('   Check the statuses, something failed')	
+else:
+	print('   S-U-C-C-E-S-S all statues are 0')
+print('')
 
 
 
