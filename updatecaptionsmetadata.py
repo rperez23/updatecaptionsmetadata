@@ -218,10 +218,16 @@ for i in range(0,len(hns)):
 		#update the xlf with the new names
 		updatexlf(ws,hncol,hn,epcol,newepname,capcol,parts[0])
 
-		#NEXT STEPS:
+		#WORKING ON:
 		#RENAME MXF ON S3
 		vidmvcmd = 'aws s3 mv "' + vidpth + epname + '" "' + vidpth + newepname + '"'
 		print(vidmvcmd)
+		statvidmv = os.system(vidmvcmd)
+
+		print(statcapmv, type(statcapmv))
+		print(statvidmv, type(statvidmv))
+
+
 
 		print('')
 
